@@ -4,6 +4,7 @@ import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.SableCommonEvents;
 import dev.ryanhcode.sable.SableConfig;
 import dev.ryanhcode.sable.command.SableCommand;
+import dev.ryanhcode.sable.command.SableLightCommand;
 import dev.ryanhcode.sable.command.argument.SubLevelSelectorModifiers;
 import dev.ryanhcode.sable.index.SableAttributes;
 import dev.ryanhcode.sable.physics.config.FloatingBlockMaterialDataHandler;
@@ -14,6 +15,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.packs.PackType;
@@ -27,6 +29,9 @@ public final class SableFabric implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             SableCommand.register(dispatcher, registryAccess);
+            if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+                SableLightCommand.register(dispatcher, registryAccess);
+            }
         });
 
         SubLevelSelectorModifiers.registerModifiers();

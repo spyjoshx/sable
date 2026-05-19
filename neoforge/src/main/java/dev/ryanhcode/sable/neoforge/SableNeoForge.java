@@ -1,14 +1,18 @@
 package dev.ryanhcode.sable.neoforge;
 
+import com.mojang.brigadier.CommandDispatcher;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.SableCommonEvents;
 import dev.ryanhcode.sable.SableConfig;
 import dev.ryanhcode.sable.command.SableCommand;
+import dev.ryanhcode.sable.command.SableLightCommand;
 import dev.ryanhcode.sable.command.argument.SubLevelSelectorModifiers;
 import dev.ryanhcode.sable.index.SableAttributes;
 import dev.ryanhcode.sable.physics.config.FloatingBlockMaterialDataHandler;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertiesDefinitionLoader;
 import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.neoforged.bus.api.IEventBus;
@@ -17,6 +21,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
@@ -57,7 +62,12 @@ public final class SableNeoForge {
     }
 
     private void registerCommand(final RegisterCommandsEvent event) {
-        SableCommand.register(event.getDispatcher(), event.getBuildContext());
+        final CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        final CommandBuildContext buildContext = event.getBuildContext();
+        SableCommand.register(dispatcher, buildContext);
+        if (!FMLLoader.isProduction()) {
+            SableLightCommand.register(dispatcher, buildContext);
+        }
     }
 
     private void syncDataPack(final OnDatapackSyncEvent event) {
